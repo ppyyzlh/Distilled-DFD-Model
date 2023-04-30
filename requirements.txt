@@ -4,3 +4,4 @@ numpy==1.20.3
 Pillow==8.3.2
 scikit-learn==1.1.1
 matplotlib==3.4.3
+pyyaml
