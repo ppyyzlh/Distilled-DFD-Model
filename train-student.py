@@ -9,12 +9,7 @@ from dfdc_dataset import DFDataset
 import torch
 from efficientnet_pytorch import EfficientNet
 
-def train():
-    # root_dir = '/home/cuc/Public_Data_Set/dfdc/dfdc_train_part_0/'
-    # json_file = '/home/cuc/Public_Data_Set/dfdc/dfdc_train_part_0/metadata.json'
-    
-    root_dir = 'minivideos/mini_train_vedios/'
-    json_file = 'minivideos/mini_train_vedios/metadata.json'
+def train(root_dir, json_file):
     transform = Compose([transforms.ToPILImage(),
                          transforms.Resize((1080, 1080)),
                          transforms.CenterCrop((512, 512)),
@@ -63,6 +58,43 @@ def train():
 
     torch.save(model.state_dict(), 'model_weights_student.pt')
 
+def test(root_dir, json_file, model_weights):
+    transform = Compose([transforms.ToPILImage(),
+                         transforms.Resize((1080, 1080)),
+                         transforms.CenterCrop((512, 512)),
+                         transforms.ToTensor()])  # 可选的变换
+    dataset = DFDataset(root_dir, json_file, transform)
+
+    batch_size = 8
+    shuffle = False
+    num_workers = 0
+    loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # model = inceptionresnetv2(num_classes=2, pretrained=None)  # 初始化模型
+    model = EfficientNet.from_name('efficientnet-b7')
+    model._fc = nn.Linear(model._fc.in_features, 2)
+    model.load_state_dict(torch.load(model_weights, map_location=device))
+    model.to(device)  # 将模型转移到GPU（如果有的话）
+
+    total_correct = 0 # 总正确数
+    with torch.no_grad():
+        for batch_idx, (frames, target) in enumerate(loader):
+            data = frames.to(device)
+            data, target = data.to(device), target.to(device)  # 将数据和标签转移到GPU（如果有的话）
+            output = model(data)  # 将数据送入模型进行前向计算
+
+            _, predicted = torch.max(output.data, 1)
+            correct = (predicted == target).sum().item()
+            total_correct += correct
+
+    accuracy = total_correct / len(dataset) # 计算准确率
+    print('Test Accuracy: {:.2f}%'.format(accuracy * 100))
+
 
 if __name__ == '__main__':
-    train()
+    root_dir = 'minivideos/mini_train_vedios/'
+    json_file = 'minivideos/mini_train_vedios/metadata.json'
+    model_weights = './model_weights_student.pt'
+    test(root_dir, json_file, model_weights)
+    # train(root_dir, json_file)
