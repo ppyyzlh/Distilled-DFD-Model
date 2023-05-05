@@ -1,0 +1,22 @@
+# 批量大小
+batch_size: 1
+# 是否随机打乱数据
+shuffle: true
+# 工作进程数量
+num_workers: 0
+# 学习率
+learning_rate: 0.001
+# 训练轮数
+num_epochs: 10
+# 温度
+temperature: 10.0
+# alpha
+alpha: 0.5
+# 数据集根目录
+root_dir: minivideos/mini_train_vedios/
+# json文件路径
+json_file: minivideos/mini_train_vedios/metadata.json
+# 权重路径
+model_weights: ./model_weights_teacher.pt
+# 
+test: true
