@@ -81,8 +81,8 @@ class DFDataset(Dataset):
             # create a blank frame and label
             frame, label = self.create_blank_frame_and_label()
 
-        cv2.imshow("Face", frame)
-        cv2.waitKey(1)
+        # cv2.imshow("Face", frame)
+        # cv2.waitKey(1)
         if self.transform:
             frame = self.transform(frame)
 
