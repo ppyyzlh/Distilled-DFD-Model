@@ -2,82 +2,94 @@ import json
 import os
 
 import cv2
+import dlib
+import numpy as np
 from torch.utils.data import Dataset
-from torchvision.transforms import transforms
-import sys
-
 from yoloface import face_analysis
-
-face = face_analysis()
-
-
-# Load YOLO model
-# net = darknet.load_net("path_to_cfg_file.cfg", "path_to_weights_file.weights", 0, 1)
-# meta = darknet.load_meta("path_to_data_file.data")
 
 
 class DFDataset(Dataset):
-    def __init__(self, root_dir, json_file, transform=None):
-        with open(json_file, 'r') as f:
+    def __init__(self, config, transform=None):
+        with open(config['json_file'], 'r') as f:
             self.meta_data = json.load(f)
 
-        self.root_dir = root_dir
+        self.root_dir = config['root_dir']
         self.transform = transform
         self.video_names = list(self.meta_data.keys())
+        self.step = config['step']
+        self.face_crop = config['face_crop']
+        self.detector = dlib.get_frontal_face_detector()
+
+        self.frame_counts = []  # a list to store the number of frames for each video
+        self.labels = []  # a list to store the label for each video
+
+        for video_name in self.video_names:
+            video_path = os.path.join(self.root_dir, video_name)
+            cap = cv2.VideoCapture(video_path)
+            # get the number of frames in the video
+            frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            cap.release()
+            # get the label for this video
+            label = 1 if self.meta_data[video_name]['label'] == 'REAL' else 0
+            # append the frame count to the list
+            self.frame_counts.append(frame_count)
+            self.labels.append(label)  # append the label to the list
 
     def __len__(self):
-        return len(self.video_names)
+        return sum(self.frame_counts) // self.step
 
     def __getitem__(self, idx):
-        video_name = self.video_names[idx]
+        # find the video and frame index corresponding to the given index
+        video_index = 0  # initialize the video index to 0
+        frame_index = idx * self.step  # initialize the frame index to idx multiplied by x
+
+        # loop until finding the right video
+        while frame_index >= self.frame_counts[video_index]:
+            # subtract the frame count of the current video from the frame index
+            frame_index -= self.frame_counts[video_index]
+            video_index += 1  # increment the video index by 1
+
+        # get the video name by video index
+        video_name = self.video_names[video_index]
+        # get the video path by video name
         video_path = os.path.join(self.root_dir, video_name)
+        label = self.labels[video_index]  # get the label by video index
 
-        cap = cv2.VideoCapture(video_path)
+        try:
+            cap = cv2.VideoCapture(video_path)  # open the video file
+            # set the position of the video to the frame index
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_index)
+            ret, frame = cap.read()  # read the next frame from the video
+            cap.release()  # release the video file
+        except:
+            ret = False  # set ret to False to indicate failure
 
-        frames = []
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-            frames.append(frame)
-        cap.release()
+        if ret:
+            # detect faces in the frame using dlib
+            if self.face_crop:
+                faces = self.detector(frame)
+                if len(faces) > 0:
+                    # get the first face bounding box
+                    face = faces[0]
+                    x1, y1, x2, y2 = face.left(), face.top(), face.right(), face.bottom()
+                    # crop the face from the frame
+                    frame = frame[y1:y2, x1:x2]
+                else:
+                    # create a blank frame and label
+                    frame, label = self.create_blank_frame_and_label()
+        else:
+            # create a blank frame and label
+            frame, label = self.create_blank_frame_and_label()
 
-        # only use every 10th frame
-        frames = frames[::10]
-        results = []
-
-        for frame in frames:
-            # Get the bounding boxes and confidence scores for the faces in the frame
-            _, boxes, confidences = face.face_detection(frame_arr=frame, model='tiny')
-
-            # Loop through the bounding boxes
-            for box in boxes:
-                x, y, w, h = box
-                # print(box)
-
-                # Increase the width and height of the bounding box by 30%
-                w = int(w * 1.3)
-                h = int(h * 1.3)
-                x -= int((w - box[2]) / 2)
-                y -= int((h - box[3]) / 2)
-
-                # Ensure that the bounding box is within the bounds of the frame
-                x = max(0, x)
-                y = max(0, y)
-                w = min(w, frame.shape[1] - x)
-                h = min(h, frame.shape[0] - y)
-
-                face_img = frame[y:y + h, x:x + w]
-                # cv2.imshow("Face", face_img)
-                # cv2.waitKey(1)
-                results.append(face_img)
-        if len(results) ==0:
-            results = frames
-
+        cv2.imshow("Face", frame)
+        cv2.waitKey(1)
         if self.transform:
+            frame = self.transform(frame)
 
-            results = [self.transform(face_img) for face_img in results]
+        return frame, label
 
-        label = 1 if self.meta_data[video_name]['label'] == 'REAL' else 0
-        return results[0], label
-
+    def create_blank_frame_and_label(self):
+        # create a blank frame and label with zeros and -1 respectively
+        frame = np.zeros((224, 224, 3), dtype=np.uint8)
+        label = -1
+        return frame, label
