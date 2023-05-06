@@ -86,6 +86,11 @@ class DFDataset(Dataset):
         if self.transform:
             frame = self.transform(frame)
 
+        # to_pil = transforms.ToPILImage()
+        # pil_image = to_pil(frame)
+        # plt.imshow(pil_image)
+        # plt.show()
+
         return frame, label
 
     def create_blank_frame_and_label(self):
