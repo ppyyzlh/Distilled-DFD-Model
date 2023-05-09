@@ -1,5 +1,6 @@
 __pycache__/
 .yoloface/
+.vscode/
 minivideos/
 nohup.out
 *.pt

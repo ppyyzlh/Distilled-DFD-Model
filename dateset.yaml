@@ -9,4 +9,4 @@ face_crop: false
 
 transform:
   - name: Resize
-    size: 64
+    size: [64, 64]

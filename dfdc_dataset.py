@@ -88,33 +88,32 @@ class DFDataset(Dataset):
         if self.transform:
             frame = self.transform(frame)
 
-        to_pil = transforms.ToPILImage()
-        pil_image = to_pil(frame)
-        plt.imshow(pil_image)
-        plt.show()
+        # to_pil = transforms.ToPILImage()
+        # pil_image = to_pil(frame)
+        # plt.imshow(pil_image)
+        # plt.show()
 
         return frame, label
 
     def create_blank_frame_and_label(self):
         # create a blank frame and label with zeros and -1 respectively
         frame = np.zeros((224, 224, 3), dtype=np.uint8)
-        label = -1
+        label = 1
         return frame, label
     
     def config_transform(self, config):
         transform_dict = {
             "Resize": transforms.Resize,
+            "CenterCrop": transforms.CenterCrop,
         }
-        transform_list = [transforms.ToPILImage(), transforms.ToTensor()]
+        transform_list = [transforms.ToPILImage()]
 
         for item in config:
-            name = item['name']
-            if len(item) > 1 :
-                params = item.copy()
-                del params['name']
-                transform = transform_dict[name](**params)
-            else:
-                transform = transform_dict['name']
-            transform_list.insert(-1, transform)
-            return transforms.Compose(transform_list)
+            name = item.pop('name')
+            transform = transform_dict[name]
+            if transform is not None:
+                transform = transform(**item)
+                transform_list.append(transform)
+        transform_list.append(transforms.ToTensor())
+        return transforms.Compose(transform_list)
         

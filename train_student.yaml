@@ -4,6 +4,7 @@ batch_size: 1
 shuffle: true
 # 工作进程数量
 num_workers: 0
+
 # 学习率
 learning_rate: 0.001
 # 训练轮数
@@ -12,11 +13,20 @@ num_epochs: 10
 temperature: 10.0
 # alpha
 alpha: 0.5
-# 数据集根目录
-root_dir: minivideos/mini_train_vedios/
-# json文件路径
-json_file: minivideos/mini_train_vedios/metadata.json
 # 权重路径
 model_weights: ./model_weights_student.pt
 # 
-test: false
+test: true
+
+dataset:
+  # 数据集根目录
+  root_dir: minivideos/mini_train_vedios/
+  # json文件路径
+  json_file: minivideos/mini_train_vedios/metadata.json
+  # 步长
+  step: 30
+  # 人脸裁剪 未发现人脸的将用全黑图片代替
+  face_crop: true
+  transform:
+    - name: Resize
+      size: [64, 64]

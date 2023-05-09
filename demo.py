@@ -12,11 +12,8 @@ dataset_config = dict()
 with open('dateset.yaml', encoding='utf-8') as f:
     dataset_config = yaml.safe_load(f)
 
-transform = Compose([transforms.ToPILImage(),
-                        transforms.Resize((64, 64)),
-                        transforms.ToTensor()])  # 可选的变换
 
-
+print(dataset_config)
 dataset = DFDataset(dataset_config)
 
 loader = torch.utils.data.DataLoader(
