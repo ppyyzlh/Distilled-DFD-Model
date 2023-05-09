@@ -6,3 +6,7 @@ json_file: minivideos/mini_train_vedios/metadata.json
 step: 30
 # 人脸裁剪 未发现人脸的将用全黑图片代替
 face_crop: false
+
+transform:
+  - name: Resize
+    size: 64

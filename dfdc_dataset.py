@@ -5,20 +5,22 @@ import cv2
 import dlib
 import numpy as np
 from torch.utils.data import Dataset
-from yoloface import face_analysis
+import matplotlib.pyplot as plt
+from torchvision import transforms
 
 
 class DFDataset(Dataset):
-    def __init__(self, config, transform=None):
+    def __init__(self, config):
         with open(config['json_file'], 'r') as f:
             self.meta_data = json.load(f)
 
         self.root_dir = config['root_dir']
-        self.transform = transform
+        self.transform = self.config_transform(config['transform'])
         self.video_names = list(self.meta_data.keys())
         self.step = config['step']
         self.face_crop = config['face_crop']
         self.detector = dlib.get_frontal_face_detector()
+
 
         self.frame_counts = []  # a list to store the number of frames for each video
         self.labels = []  # a list to store the label for each video
@@ -86,10 +88,10 @@ class DFDataset(Dataset):
         if self.transform:
             frame = self.transform(frame)
 
-        # to_pil = transforms.ToPILImage()
-        # pil_image = to_pil(frame)
-        # plt.imshow(pil_image)
-        # plt.show()
+        to_pil = transforms.ToPILImage()
+        pil_image = to_pil(frame)
+        plt.imshow(pil_image)
+        plt.show()
 
         return frame, label
 
@@ -98,3 +100,21 @@ class DFDataset(Dataset):
         frame = np.zeros((224, 224, 3), dtype=np.uint8)
         label = -1
         return frame, label
+    
+    def config_transform(self, config):
+        transform_dict = {
+            "Resize": transforms.Resize,
+        }
+        transform_list = [transforms.ToPILImage(), transforms.ToTensor()]
+
+        for item in config:
+            name = item['name']
+            if len(item) > 1 :
+                params = item.copy()
+                del params['name']
+                transform = transform_dict[name](**params)
+            else:
+                transform = transform_dict['name']
+            transform_list.insert(-1, transform)
+            return transforms.Compose(transform_list)
+        

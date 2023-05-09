@@ -17,7 +17,7 @@ transform = Compose([transforms.ToPILImage(),
                         transforms.ToTensor()])  # 可选的变换
 
 
-dataset = DFDataset(dataset_config, transform)
+dataset = DFDataset(dataset_config)
 
 loader = torch.utils.data.DataLoader(
         dataset,  batch_size=config['batch_size'], shuffle=config['shuffle'], num_workers=config['num_workers'])
