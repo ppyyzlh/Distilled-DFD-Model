@@ -1,5 +1,7 @@
 import torch
 import yaml
+import torchmetrics
+from tqdm import tqdm
 from efficientnet_pytorch import EfficientNet
 from torch import nn, optim
 from torchvision.transforms import Compose, transforms
@@ -18,27 +20,29 @@ def train(config):
     optimizer = optim.Adam(model.parameters(), lr=config['learning_rate'])  # 定义优化器
     criterion = nn.CrossEntropyLoss()  # 定义交叉熵损失函数
 
+    accuracy = torchmetrics.Accuracy(task='multiclass', num_classes=2).to(device)
+
     for epoch in range(config['num_epochs']):
-        total_correct = 0  # 总正确数
-        for batch_idx, (frames, target) in enumerate(loader):
-            data, target = data.to(device), target.to(device)  # 将数据和标签转移到GPU（如果有的话）
+        accuracy.reset()
+        sum_loss = 0
+        loop = tqdm(loader) # 创建一个循环对象
+        for batch_idx, (frames, labels) in enumerate(loader):
+            frames, labels= frames.to(device), labels.to(device)  # 将数据和标签转移到GPU（如果有的话）
             optimizer.zero_grad()  # 清空梯度
-            output = model(data)  # 将数据送入模型进行前向计算
-            loss = criterion(output, target)  # 计算损失
+            output = model(frames)  # 将数据送入模型进行前向计算
+            loss = criterion(output, labels)  # 计算损失
             loss.backward()  # 反向传播
             optimizer.step()  # 更新权重
 
-            with torch.no_grad():
-                _, predicted = torch.max(output.data, 1)
-                correct = (predicted == target).sum().item()
-                accuracy = correct / len(target)
-                total_correct += correct
-
-            print('Epoch [{}/{}], Batch [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'.format(epoch + 1, config['num_epochs'], batch_idx + 1, len(loader), loss.item(),
-                                                                                         accuracy * 100))
-        epoch_accuracy = total_correct / len(dataset)  # 计算平均准确率
-        print('Epoch [{}/{}], Accuracy: {:.2f}%'.format(epoch +
-              1, config['num_epochs'], epoch_accuracy * 100))
+            sum_loss += loss.item()
+            accuracy.update(output, labels)
+            loop.set_postfix(loss=round(sum_loss/(batch_idx+1), 2), acc=f'{accuracy.compute().item() * 100:.2f}%') # 更新进度条的信息
+            loop.update()
+            
+        loop.close()
+        avg_loss = sum_loss // len(loader)
+        acc = accuracy.compute()
+        print('Epoch [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'.format(epoch + 1, config['num_epochs'], avg_loss, acc * 100))
 
     torch.save(model.state_dict(), 'model_weights_student.pt')
 

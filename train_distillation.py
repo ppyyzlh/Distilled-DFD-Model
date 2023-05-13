@@ -94,6 +94,6 @@ def train_distillation(config):
     
 if __name__ == '__main__':
     config = dict()
-    with open('train_distillation.yaml') as f:
+    with open('train_distillation.yaml', encoding='utf-8') as f:
         config = yaml.safe_load(f)
     train_distillation(config)
