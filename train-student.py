@@ -1,15 +1,19 @@
+import os
+
 import torch
-import yaml
 import torchmetrics
-from tqdm import tqdm
+import yaml
 from efficientnet_pytorch import EfficientNet
 from torch import nn, optim
-from torchvision.transforms import Compose, transforms
 
 from dfdc_dataset import DFDataset
+from model_utils import evaluate_model, train_model
 
 
 def train(config):
+
+    if not os.path.exists(config['trained_model_dir']):
+        os.makedirs(config['trained_model_dir'])
 
     dataset = DFDataset(config['dataset'])
 
@@ -23,59 +27,27 @@ def train(config):
     accuracy = torchmetrics.Accuracy(task='multiclass', num_classes=2).to(device)
 
     for epoch in range(config['num_epochs']):
-        accuracy.reset()
-        sum_loss = 0
-        loop = tqdm(loader) # 创建一个循环对象
-        for batch_idx, (frames, labels) in enumerate(loader):
-            frames, labels= frames.to(device), labels.to(device)  # 将数据和标签转移到GPU（如果有的话）
-            optimizer.zero_grad()  # 清空梯度
-            output = model(frames)  # 将数据送入模型进行前向计算
-            loss = criterion(output, labels)  # 计算损失
-            loss.backward()  # 反向传播
-            optimizer.step()  # 更新权重
-
-            sum_loss += loss.item()
-            accuracy.update(output, labels)
-            loop.set_postfix(loss=round(sum_loss/(batch_idx+1), 2), acc=f'{accuracy.compute().item() * 100:.2f}%') # 更新进度条的信息
-            loop.update()
-            
-        loop.close()
-        avg_loss = sum_loss // len(loader)
-        acc = accuracy.compute()
-        print('Epoch [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'.format(epoch + 1, config['num_epochs'], avg_loss, acc * 100))
-
-    torch.save(model.state_dict(), 'model_weights_student.pt')
+        train_loss, train_acc = train_model(model, loader, optimizer, criterion, accuracy, device) # 训练模型并获取训练损失和准确率
+        print(f"Epoch [{epoch + 1}/{config['num_epochs']}], Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc.item() * 100:.2f}%")
+        val_loss, val_acc = evaluate_model(model, loader, criterion, accuracy, device) # 评估模型并获取验证损失和准确率
+        print(f"Epoch [{epoch + 1}/{config['num_epochs']}], Val Loss: {val_loss:.4f}, Val Accuracy: {val_acc.item() * 100:.2f}%")
+        torch.save(model.state_dict(), os.path.join(config['trained_model_dir'], f'model_weights_{epoch+1}_{round(train_acc.item() * 100, 2)}%.pt'))
 
 
 def test(config):
-    transform = Compose([transforms.ToPILImage(),
-                         transforms.Resize((1080, 1080)),
-                         transforms.CenterCrop((512, 512)),
-                         transforms.ToTensor()])  # 可选的变换
-    dataset = DFDataset(config['root_dir'], config['json_file'], transform)
+    dataset = DFDataset(config['test_dataset']) # 加载测试集
 
-    loader = torch.utils.data.DataLoader(
-        dataset, batch_size=config['batch_size'], shuffle=config['shuffle'], num_workers=config['num_workers'])
+    loader = torch.utils.data.DataLoader(dataset, batch_size=config['batch_size'], shuffle=False, num_workers=config['num_workers']) # 创建数据加载器
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # 获取设备
+    model = config_model(device) # 创建模型
+    model.load_state_dict(torch.load(config['test_model_weight'])) # 加载最佳模型的权重
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = EfficientNet.from_name('efficientnet-b7')
-    model._fc = nn.Linear(model._fc.in_features, 2)
-    model.load_state_dict(torch.load(
-        config['model_weights'], map_location=device))
-    model.to(device)  # 将模型转移到GPU（如果有的话）
+    criterion = nn.CrossEntropyLoss()  # 定义交叉熵损失函数
+    accuracy = torchmetrics.Accuracy(task='multiclass', num_classes=2).to(device) # 定义准确率指标
 
-    total_correct = 0  # 总正确数
-    with torch.no_grad():
-        for batch_idx, (frames, target) in enumerate(loader):
-            data, target = data.to(device), target.to(device)  # 将数据和标签转移到GPU（如果有的话）
-            output = model(data)  # 将数据送入模型进行前向计算
+    test_loss, test_acc = evaluate_model(model, loader, criterion, accuracy, device) # 评估模型并获取测试损失和准确率
+    print(f'Test Loss: {test_loss:.4f}, Test Accuracy: {test_acc.item() * 100:.2f}%') # 打印测试结果
 
-            _, predicted = torch.max(output.data, 1)
-            correct = (predicted == target).sum().item()
-            total_correct += correct
-
-    accuracy = total_correct / len(dataset)  # 计算准确率
-    print('Test Accuracy: {:.2f}%'.format(accuracy * 100))
 
 
 def config_model(device):
