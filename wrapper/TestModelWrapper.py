@@ -4,7 +4,9 @@ import torchmetrics
 from tqdm import tqdm
 from torch import nn
 
-from dfdc_dataset import DFDataset
+from dataloader.dfdc_loader import DFDCLoader
+from dataloader.video_dataset import VideoDataset
+
 
 from .ModelWrapper import ModelWrapper
 
@@ -14,7 +16,8 @@ class TestModelWrapper(ModelWrapper):
         super().__init__(config)
         self.model.load_state_dict(torch.load(config['test_model_weight']))
         # create a test dataset
-        dataset = DFDataset(config['dataset'])
+        loader = DFDCLoader(config['loader'])
+        dataset =VideoDataset(config['dataset'], loader)
         # create a test loader
         self.loader = torch.utils.data.DataLoader(
             dataset, batch_size=config['batch_size'], shuffle=False, num_workers=config['num_workers'])

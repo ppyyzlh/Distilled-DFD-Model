@@ -5,7 +5,8 @@ from torch import nn, optim
 import torchmetrics
 from tqdm import tqdm
 
-from dfdc_dataset import DFDataset
+from dataloader.dfdc_loader import DFDCLoader
+from dataloader.video_dataset import VideoDataset
 
 from .ModelWrapper import ModelWrapper
 
@@ -17,8 +18,9 @@ class TrainModelWrapper(ModelWrapper):
         if not os.path.exists(config['trained_model_dir']):
             os.makedirs(config['trained_model_dir'])
         
-        dataset = DFDataset(config['dataset'])
-        val_dataset = DFDataset(config['val_dataset'])
+        loader = DFDCLoader(config['loader'])
+        dataset =VideoDataset(config['dataset'], loader)
+        val_dataset =VideoDataset(config['val_dataset'], loader)
         self.loader = torch.utils.data.DataLoader(
             dataset, batch_size=config['batch_size'], shuffle=config['shuffle'], num_workers=config['num_workers'])
         self.val_loader = torch.utils.data.DataLoader(

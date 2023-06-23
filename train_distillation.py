@@ -1,3 +1,4 @@
+import argparse
 import os
 import torch
 from wrapper.DistillationTrainModelWrapper import DistillationTrainModelWrapper
@@ -15,7 +16,10 @@ def train(wrapper):
     
     
 if __name__ == '__main__':
-    with open('train_distillation.yaml', encoding='utf-8') as f:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, default='configs/dev/train_distillation.yaml', help='path to the config file')
+    args = parser.parse_args()
+    with open(args.config, encoding='utf-8') as f:
         config = yaml.safe_load(f)
     wrapper = DistillationTrainModelWrapper(config)
     train(wrapper)

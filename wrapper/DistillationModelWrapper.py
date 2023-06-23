@@ -1,7 +1,7 @@
 from .ModelWrapper import ModelWrapper
 
 import torch
-from models.config import config_model
+from networks.config import config_model
 
 class DistillationModelWrapper(ModelWrapper):
     def __init__(self, config):

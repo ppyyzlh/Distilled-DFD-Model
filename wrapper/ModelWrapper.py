@@ -1,6 +1,6 @@
 
 import torch
-from models.config import config_model
+from networks.config import config_model
 
 
 class ModelWrapper:

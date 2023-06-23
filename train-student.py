@@ -1,4 +1,5 @@
 import os
+import argparse
 
 import torch
 import yaml
@@ -16,7 +17,10 @@ def train(wrapper):
 
 
 if __name__ == '__main__':
-    with open('train_student.yaml', encoding='utf-8') as f:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, default='configs/dev/train_student.yaml', help='path to the config file')
+    args = parser.parse_args()
+    with open(args.config, encoding='utf-8') as f:
         config = yaml.safe_load(f)
     wrapper = TrainModelWrapper(config)
     train(wrapper)
