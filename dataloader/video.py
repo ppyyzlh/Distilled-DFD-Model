@@ -8,8 +8,6 @@ class Video:
         self.name = name
         self.path = os.path.join(root_dir, name)
         self.label = 1 if attributes['label'] == 'REAL' else 0
-        self.original = attributes['original']
-        self.original = attributes['split']
         self.cap = cv2.VideoCapture(self.path)
         self.frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
