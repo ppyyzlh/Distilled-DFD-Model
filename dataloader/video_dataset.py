@@ -1,9 +1,10 @@
 from torch.utils.data import Dataset
 import json
 from .video import Video
+import os               
+from tqdm import tqdm
 
-import matplotlib.pyplot as plt
-from torchvision import transforms
+
 
 
 class VideoDataset(Dataset):
@@ -17,11 +18,15 @@ class VideoDataset(Dataset):
             self.total_frames += video.frame_count
 
     def load_video(self, root_dir, meta_data):
+        print(f'load {meta_data}')
         with open(meta_data, 'r') as f:
             meta_data = json.load(f)
-        for video_name in meta_data.keys():
-            attributes = meta_data[video_name]
-            self.videos.append(Video(root_dir, video_name, attributes))
+        for video_name in  tqdm(meta_data.keys()):
+            if os.access(os.path.join(root_dir, video_name), os.R_OK) :
+                attributes = meta_data[video_name]
+                self.videos.append(Video(root_dir, video_name, attributes))
+            else:
+                tqdm.write(f"Cannot access {video_name} in {root_dir}")
         return
 
     def __len__(self):
