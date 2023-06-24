@@ -1,0 +1,133 @@
+model: efficientnet-b7
+num_classes: 2
+# 批量大小
+batch_size: 14
+# 是否随机打乱数据
+shuffle: true
+# 工作进程数量
+num_workers: 2
+
+optimizer:
+  name: Adam
+  params:
+    lr: 0.001
+
+criterion:
+  name: CrossEntropyLoss
+
+# 训练轮数
+num_epochs: 10
+#保存训练模型的文件夹
+trained_model_dir: ./models/model_student/
+
+loader:
+  # 步长
+  step: 30
+  # 人脸裁剪 未发现人脸的将用全黑图片代替
+  face_crop: true
+  transform:
+    - name: Resize
+      size: [200, 200]
+
+dataset:
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_0/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_0/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_1/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_1/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_2/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_2/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_3/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_3/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_4/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_4/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_5/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_5/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_6/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_6/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_7/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_7/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_8/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_8/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_9/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_9/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_10/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_10/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_11/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_11/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_12/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_12/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_13/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_13/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_14/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_14/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_15/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_15/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_16/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_16/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_17/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_17/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_18/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_18/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_19/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_19/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_20/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_20/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_21/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_21/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_22/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_22/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_23/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_23/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_24/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_24/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_25/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_25/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_26/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_26/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_27/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_27/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_28/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_28/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_29/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_29/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_30/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_30/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_31/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_31/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_32/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_32/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_33/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_33/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_34/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_34/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_35/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_35/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_36/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_36/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_37/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_37/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_38/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_38/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_39/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_39/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_40/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_40/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_41/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_41/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_42/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_42/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_43/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_43/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_44/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_44/metadata.json
+val_dataset:
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_45/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_45/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_46/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_46/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_47/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_47/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_48/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_48/metadata.json
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_49/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_49/metadata.json
