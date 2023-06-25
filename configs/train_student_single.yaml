@@ -1,0 +1,37 @@
+model: efficientnet-b7
+num_classes: 2
+# 批量大小
+batch_size: 14
+# 是否随机打乱数据
+shuffle: true
+# 工作进程数量
+num_workers: 2
+
+optimizer:
+  name: Adam
+  params:
+    lr: 0.001
+
+criterion:
+  name: CrossEntropyLoss
+
+# 训练轮数
+num_epochs: 10
+#保存训练模型的文件夹
+trained_model_dir: ./models/model_student/
+
+loader:
+  # 步长
+  step: 30
+  # 人脸裁剪 未发现人脸的将用全黑图片代替
+  face_crop: true
+  transform:
+    - name: Resize
+      size: [200, 200]
+
+dataset:
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_0/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_0/metadata.json
+val_dataset:
+  - root_dir: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_45/
+    metadata: /home/cuc/Public_Data_Set/dfdc/dfdc_train_part_45/metadata.json
