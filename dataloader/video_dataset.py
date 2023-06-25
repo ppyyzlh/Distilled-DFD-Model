@@ -39,11 +39,17 @@ class VideoDataset(Dataset):
             frame_index -= self.videos[video_index].frame_count
             video_index += 1
         video = self.videos[video_index]
-        frame = video.get_frame(frame_index)
-        label = video.label
-        if self.loader.face_crop:
-            frame = self.loader.crop_face(frame)
+        try:
+            frame = video.get_frame(frame_index)
+            label = video.label
+            if self.loader.face_crop:
+                    frame = self.loader.crop_face(frame)
             if frame is None:
                 frame, label = self.loader.create_blank_frame_and_label()
-        frame = self.loader.transform(frame)
+            frame = self.loader.transform(frame)
+        except Exception as e:
+            print(f'Error in {video.name} {frame_index}')
+            print(e)
+            frame, label = self.loader.create_blank_frame_and_label()
+            frame = self.loader.transform(frame)
         return (frame, label)
