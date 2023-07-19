@@ -5,7 +5,7 @@ from torch import nn, optim
 import torchmetrics
 from tqdm import tqdm
 
-from dataloader.dfdc_loader import DFDCLoader
+from dataloader.dfdc_preprocessor import DFDCPreprocessor
 from dataloader.video_dataset import VideoDataset
 
 import torch.nn.functional as F
@@ -20,7 +20,7 @@ class DistillationTrainModelWrapper(DistillationModelWrapper):
         if not os.path.exists(config['trained_model_dir']):
             os.makedirs(config['trained_model_dir'])
         
-        loader = DFDCLoader(config['loader'])
+        loader = DFDCPreprocessor(config['loader'])
         dataset =VideoDataset(config['dataset'], loader)
         val_dataset =VideoDataset(config['val_dataset'], loader)
         self.loader = torch.utils.data.DataLoader(

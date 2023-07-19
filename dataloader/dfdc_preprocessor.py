@@ -3,7 +3,7 @@ import numpy as np
 from torchvision import transforms
 
 
-class DFDCLoader:
+class DFDCPreprocessor:
     def __init__(self, config) -> None:
         self.transform = self.config_transform(config['transform'])
         self.step = config['step']

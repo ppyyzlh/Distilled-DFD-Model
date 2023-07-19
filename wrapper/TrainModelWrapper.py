@@ -5,7 +5,7 @@ from torch import nn, optim
 import torchmetrics
 from tqdm import tqdm
 
-from dataloader.dfdc_loader import DFDCLoader
+from dataloader.dfdc_preprocessor import DFDCPreprocessor
 from dataloader.video_dataset import VideoDataset
 
 from .ModelWrapper import ModelWrapper
@@ -18,7 +18,7 @@ class TrainModelWrapper(ModelWrapper):
         if not os.path.exists(config['trained_model_dir']):
             os.makedirs(config['trained_model_dir'])
         
-        loader = DFDCLoader(config['loader'])
+        loader = DFDCPreprocessor(config['loader'])
         dataset =VideoDataset(config['dataset'], loader)
         val_dataset =VideoDataset(config['val_dataset'], loader)
         self.loader = torch.utils.data.DataLoader(
@@ -72,12 +72,12 @@ class TrainModelWrapper(ModelWrapper):
         # 评估模型的函数
         self.accuracy.reset()
         sum_loss = 0
-        loop = tqdm(self.loader) # 创建一个循环对象
+        loop = tqdm(self.val_loader) # 创建一个循环对象
         self.accuracy.to(self.device)
         self.model.to(self.device)
         self.model.eval()
         with torch.no_grad(): # 不计算梯度
-            for batch_idx, (frames, labels) in enumerate(self.loader):
+            for batch_idx, (frames, labels) in enumerate(self.val):
                 frames, labels= frames.to(self.device), labels.to(self.device)  # 将数据和标签转移到GPU（如果有的话）
                 output = self.model(frames)  # 将数据送入模型进行前向计算
                 loss = self.criterion(output, labels)  # 计算损失
