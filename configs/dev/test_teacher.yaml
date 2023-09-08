@@ -1,0 +1,27 @@
+model: inceptionresnetv2
+num_classes: 2
+# 批量大小
+batch_size: 1
+# 工作进程数量
+num_workers: 0
+
+criterion:
+  name: CrossEntropyLoss
+
+#测试模型的权重文件
+test_model_weight: models/model_teacher/model_weights_1_76.77%.pt
+
+loader:
+  # 步长
+  step: 30
+  # 人脸裁剪 未发现人脸的将用全黑图片代替
+  face_crop: true
+  transform:
+    - name: Resize
+      size: [64, 64]
+
+dataset:
+  - # 数据集根目录
+   root_dir: minivideos/mini_train_vedios_1/
+   # json文件路径
+   metadata: minivideos/mini_train_vedios_1/metadata.json
