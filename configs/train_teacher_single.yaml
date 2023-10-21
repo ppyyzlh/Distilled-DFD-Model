@@ -1,7 +1,7 @@
 model: inceptionresnetv2
 num_classes: 2
 # 批量大小
-batch_size: 32
+batch_size: 8
 # 是否随机打乱数据
 shuffle: true
 # 工作进程数量
@@ -22,9 +22,9 @@ trained_model_dir: ./models/model_teacher/
 
 loader:
   # 步长
-  step: 30
+  step: 300
   # 人脸裁剪 未发现人脸的将用全黑图片代替
-  face_crop: true
+  face_crop: false
   transform:
     - name: Resize
       size: [299, 299]
