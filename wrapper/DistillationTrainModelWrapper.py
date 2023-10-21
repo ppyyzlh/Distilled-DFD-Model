@@ -87,7 +87,6 @@ class DistillationTrainModelWrapper(DistillationModelWrapper):
 
             sum_loss += loss.item()
             self.accuracy.update(output, labels)
-            loop.write(str(loss.item()))
             loop.set_postfix(loss=round(sum_loss/(batch_idx+1), 2), acc=f'{self.accuracy.compute().item() * 100:.2f}%') # 更新进度条的信息
             loop.update()
             
