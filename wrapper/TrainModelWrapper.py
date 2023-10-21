@@ -77,7 +77,7 @@ class TrainModelWrapper(ModelWrapper):
         self.model.to(self.device)
         self.model.eval()
         with torch.no_grad(): # 不计算梯度
-            for batch_idx, (frames, labels) in enumerate(self.val):
+            for batch_idx, (frames, labels) in enumerate(self.val_loader):
                 frames, labels= frames.to(self.device), labels.to(self.device)  # 将数据和标签转移到GPU（如果有的话）
                 output = self.model(frames)  # 将数据送入模型进行前向计算
                 loss = self.criterion(output, labels)  # 计算损失
