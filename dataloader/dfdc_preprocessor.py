@@ -33,6 +33,11 @@ class DFDCPreprocessor:
             face = faces[0]
             x1, y1, x2, y2 = face.left(), face.top(), face.right(), face.bottom()
             # crop the face from the frame
+            height, width, _ = frame.shape
+            x1 = max(0, x1)
+            y1 = max(0, y1)
+            x2 = min(width, x2)
+            y2 = min(height, y2)
             return frame[y1:y2, x1:x2]
         else:
             return None

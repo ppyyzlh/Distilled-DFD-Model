@@ -1,4 +1,5 @@
 import os
+import cv2
 
 import torch
 from torch import nn, optim
@@ -77,6 +78,7 @@ class DistillationTrainModelWrapper(DistillationModelWrapper):
             frames, labels= frames.to(self.device), labels.to(self.device)  # 将数据和标签转移到GPU（如果有的话）
             with torch.no_grad():
                     teacher_output = self.teacher_model(frames)
+            # frames = self.gaussian_blur(frames)
             output = self.model(frames)  # 将数据送入模型进行前向计算
             loss = self.distill_loss(output, teacher_output, labels)  # 计算损失
             self.optimizer.zero_grad()  # 清空梯度
@@ -85,7 +87,6 @@ class DistillationTrainModelWrapper(DistillationModelWrapper):
 
             sum_loss += loss.item()
             self.accuracy.update(output, labels)
-            loop.write(str(loss.item()))
             loop.set_postfix(loss=round(sum_loss/(batch_idx+1), 2), acc=f'{self.accuracy.compute().item() * 100:.2f}%') # 更新进度条的信息
             loop.update()
             
@@ -117,3 +118,10 @@ class DistillationTrainModelWrapper(DistillationModelWrapper):
         avg_loss = sum_loss / len(self.loader)
         acc = self.accuracy.compute()
         return avg_loss, acc
+
+    def gaussian_blur(self, frames):
+        frames = frames.permute(0, 2, 3, 1).cpu().numpy()  # 将数据转换为 numpy 数组
+        for i in range(frames.shape[0]):
+            frames[i] = cv2.GaussianBlur(frames[i], (5, 5), 0)  # 对每一帧进行高斯模糊
+        frames = torch.from_numpy(frames).permute(0, 3, 1, 2).to(self.device)  # 将数据转换回 PyTorch 张量
+        return frames
