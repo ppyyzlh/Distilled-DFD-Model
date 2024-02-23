@@ -1,9 +1,48 @@
-<mxfile host="app.diagrams.net" modified="2024-02-23T13:15:53.784Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15" version="23.1.6" etag="lOYUGvTXMVcPRZaF8FXJ" type="github">
+<mxfile host="app.diagrams.net" modified="2024-02-23T13:18:50.962Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15" etag="hUn_NTWoQ_-07UNHYdFK" version="23.1.6" type="github">
   <diagram name="Page-1" id="hYhZDuFpKNE4-Qzu4m9Y">
-    <mxGraphModel>
+    <mxGraphModel dx="838" dy="687" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-1" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="110" y="290" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-2" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="dcT6IewEEVFDHiKQmzLT-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="380" as="sourcePoint" />
+            <mxPoint x="340" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-3" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="190" y="330" as="sourcePoint" />
+            <mxPoint x="330" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-4" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="dcT6IewEEVFDHiKQmzLT-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="250" y="470" as="sourcePoint" />
+            <mxPoint x="330" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-6" value="颜色直方图" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="330" y="170" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-7" value="纹理细节图" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="340" y="290" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-8" value="几何特征图" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="330" y="410" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-9" value="注解" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="410" y="195" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-10" value="注解" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="425" y="315" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dcT6IewEEVFDHiKQmzLT-11" value="注解" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="410" y="435" width="60" height="30" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
